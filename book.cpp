@@ -4,6 +4,8 @@
 
 using namespace std;
 
+
+
 Book::Book() {
     setTitle("");
     setAuthor("");
@@ -63,6 +65,16 @@ void Book::setBorrowerId(const string& id){
 }
 
 // Methods
+string trim(const string& value) {
+    const size_t first = value.find_first_not_of(" \t\r\n");
+    if (first == string::npos) {
+        return "";
+    }
+
+    const size_t last = value.find_last_not_of(" \t\r\n");
+    return value.substr(first, last - first + 1);
+}
+
 void Book::checkOut(const string& borrowerId){
     setAvailability(false);
     setBorrowerId(borrowerId);
@@ -73,7 +85,21 @@ void Book::returnBook(){
     setBorrowerId("");
 }
 
-string Book::toString() const{
+string Book::toString(const string& borrowerName) const{
+    string result = getTitle() + " | " 
+        + getAuthor() + " | " 
+        + getISBN() + " | ";
+
+    if(getAvailability()){
+        result += "1 |";
+    }else{
+        result += "0 | " + borrowerName;
+    }
+
+    return result;
+}
+
+string Book::toFileFormat() const{
     string result = getTitle() + " | " 
         + getAuthor() + " | " 
         + getISBN() + " | ";
@@ -87,10 +113,6 @@ string Book::toString() const{
     return result;
 }
 
-string Book::toFileFormat() const{
-    return toString();
-}
-
 void Book::fromFileFormat(const string& line){
     stringstream bookInfo(line);
 
@@ -102,5 +124,9 @@ void Book::fromFileFormat(const string& line){
     getline(bookInfo, available, '|');
     getline(bookInfo, this->borrowerId, '|');
 
-    setAvailability(available == "1");
+    this->title = trim(this->title);
+    this->author = trim(this->author);
+    this->isbn = trim(this->isbn);
+    this->borrowerId = trim(this->borrowerId);
+    setAvailability(trim(available) == "1");
 }
