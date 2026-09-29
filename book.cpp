@@ -4,7 +4,21 @@
 
 using namespace std;
 
-Book::Book() {}
+Book::Book() {
+    setTitle("");
+    setAuthor("");
+    setISBN("");
+    setAvailability(true);
+    setBorrowerId("");
+}
+
+Book::Book(const string& title, const string& author, const string& isbn){
+    setTitle(title);
+    setAuthor(author);
+    setISBN(isbn);
+    setAvailability(true);
+    setBorrowerId("");
+}
 
 // Getters
 string Book::getTitle() const{
