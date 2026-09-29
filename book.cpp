@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "book.h"
 
 using namespace std;
@@ -44,4 +46,47 @@ void Book::setAvailability(bool available){
 
 void Book::setBorrowerId(const string& id){
     this->borrowerId=id;
+}
+
+// Methods
+void Book::checkOut(const string& borrowerId){
+    setAvailability(false);
+    setBorrowerId(borrowerId);
+}
+
+void Book::returnBook(){
+    setAvailability(true);
+    setBorrowerId("");
+}
+
+string Book::toString() const{
+    string result = getTitle() + " | " 
+        + getAuthor() + " | " 
+        + getISBN() + " | ";
+
+    if(getAvailability()){
+        result += "1 |";
+    }else{
+        result += "0 | " + getBorrowerId();
+    }
+
+    return result;
+}
+
+string Book::toFileFormat() const{
+    return toString();
+}
+
+void Book::fromFileFormat(const string& line){
+    stringstream bookInfo(line);
+
+    string available;
+
+    getline(bookInfo, this->title, '|');
+    getline(bookInfo, this->author, '|');
+    getline(bookInfo, this->isbn, '|');
+    getline(bookInfo, available, '|');
+    getline(bookInfo, this->borrowerId, '|');
+
+    setAvailability(available == "1");
 }
