@@ -65,7 +65,7 @@ void Book::setBorrowerId(const string& id){
 }
 
 // Methods
-string trim(const string& value) {
+string Book::trim(const string& value) {
     const size_t first = value.find_first_not_of(" \t\r\n");
     if (first == string::npos) {
         return "";

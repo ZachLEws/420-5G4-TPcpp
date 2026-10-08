@@ -5,6 +5,17 @@
 
 using namespace std;
 
+namespace {
+void sortBooksByTitleAndAuthor(vector<Book*>& books) {
+    sort(books.begin(), books.end(), [](const Book* left, const Book* right) {
+        if (left->getTitle() != right->getTitle()) {
+            return left->getTitle() < right->getTitle();
+        }
+        return left->getAuthor() < right->getAuthor();
+    });
+}
+}
+
 // Constructor
 Library::Library() {}
 
@@ -148,19 +159,20 @@ bool Library::returnBook(const string& isbn) {
 
 // Display all books
 void Library::displayAllBooks() {
-    if (books.empty()) {
+    auto allBooks = getAllBooks();
+    if (allBooks.empty()) {
         cout << "Aucun livre dans la bibliothèque.\n";
         return;
     }
-    
-    
+
+    sortBooksByTitleAndAuthor(allBooks);
 
     cout << "\n=== TOUS LES LIVRES ===\n";
-    for (size_t i = 0; i < books.size(); ++i) {
-        string borrowerId = books[i]->getBorrowerId();
+    for (size_t i = 0; i < allBooks.size(); ++i) {
+        string borrowerId = allBooks[i]->getBorrowerId();
         User* borrower = findUserById(borrowerId);
         cout << "\nLivre " << (i + 1) << " :\n";
-        cout << books[i]->toString(borrower ? borrower->getName() : borrowerId) << "\n";
+        cout << allBooks[i]->toString(borrower ? borrower->getName() : borrowerId) << "\n";
         cout << "-------------------------\n";
     }
 }
@@ -173,6 +185,8 @@ void Library::displayAvailableBooks() {
         cout << "Aucun livre disponible pour emprunt.\n";
         return;
     }
+
+    sortBooksByTitleAndAuthor(available);
     
     cout << "\n=== LIVRES DISPONIBLES ===\n";
     for (size_t i = 0; i < available.size(); ++i) {

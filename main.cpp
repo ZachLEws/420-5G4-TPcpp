@@ -2,6 +2,8 @@
 #include <limits>
 #include <string>
 #include <filesystem>
+#include <algorithm>
+#include <vector>
 
 #include "library.h"
 #include "filemanager.h"
@@ -47,6 +49,15 @@ string getInput(const string& prompt) {
 
 void printUsage(const char* programName) {
     cerr << "Usage: " << programName << " [--data-dir|-d <répertoire>]\n";
+}
+
+void sortBooksByTitleAndAuthor(vector<Book*>& books) {
+    sort(books.begin(), books.end(), [](const Book* left, const Book* right) {
+        if (left->getTitle() != right->getTitle()) {
+            return left->getTitle() < right->getTitle();
+        }
+        return left->getAuthor() < right->getAuthor();
+    });
 }
 
 int main(int argc, char* argv[]) {
@@ -134,6 +145,7 @@ int main(int argc, char* argv[]) {
             case 3: { // Search by Title
                 string title = getInput("Entrez le titre à rechercher : ");
                 auto results = library.searchBooksByTitle(title);
+                sortBooksByTitleAndAuthor(results);
                 
                 if (results.empty()) {
                     cout << "Aucun livre trouvé avec ce titre.\n";
@@ -156,6 +168,7 @@ int main(int argc, char* argv[]) {
             case 4: { // Search by Author
                 string author = getInput("Entrez l'auteur à rechercher : ");
                 auto results = library.searchBooksByAuthor(author);
+                sortBooksByTitleAndAuthor(results);
                 
                 if (results.empty()) {
                     cout << "Aucun livre trouvé de cet auteur.\n";
